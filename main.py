@@ -6,11 +6,28 @@ from datetime import datetime
 from aiogram import Bot, Dispatcher, Router
 from dotenv import load_dotenv
 
+TEXTS = {
+    "ru": {
+        "start": "Привет! 👋\nЯ помогу с информацией по лофтам в Валенсии.\n\nДоступные команды:\n/price\n/location\n/faq",
+        "price": "Цены зависят от месяца.\n\nАпрель: от 70€\nИюнь: от 110€\n\nНапишите даты, и я подскажу точнее.",
+        "location": "📍 Как добраться:\n\nИз аэропорта: метро линии 3 или 5\nИз центра: метро или автобус\n\nЕсли вы на машине, подскажу парковку.",
+        "faq": "Частые вопросы:\n\n✔ Есть ли горячая вода зимой? Да\n✔ Шумно ли ночью? Район спокойный\n✔ Есть ли WiFi? Да"
+    },
+    "es": {
+        "start": "¡Hola! 👋\nTe ayudaré con información sobre los lofts en Valencia.\n\nComandos:\n/price\n/location\n/faq",
+        "price": "Los precios dependen del mes.\n\nAbril: desde 70€\nJunio: desde 110€",
+        "location": "📍 Cómo llegar:\n\nDesde el aeropuerto: metro líneas 3 o 5\nDesde el centro: metro o autobús",
+        "faq": "Preguntas frecuentes:\n\n✔ ¿Hay agua caliente? Sí\n✔ ¿Es ruidoso? No\n✔ ¿Hay WiFi? Sí"
+    }
+}
+
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 
 if not TOKEN:
     raise ValueError("BOT_TOKEN not found")
+
+DEFAULT_LANG = "ru"
 
 dp = Dispatcher()
 router = Router()
@@ -33,46 +50,23 @@ dp.include_router(router)
 
 
 @router.message(Command("start"))
-async def start(message: Message):
-    text = (
-        "Привет! 👋\n\n"
-        "Я помогу с информацией по лофтам в Валенсии.\n\n"
-        "Доступные команды:\n"
-        "/price - узнать цены\n"
-        "/location - как добраться\n"
-        "/faq - частые вопросы"
-    )
-    await message.answer(text)
+async def start(message):
+    await message.answer(TEXTS[DEFAULT_LANG]["start"])
 
 
 @router.message(Command("price"))
-async def price(message: Message):
-    await message.answer(
-        "Цены зависят от месяца.\n\n"
-        "Апрель: от 70€ за ночь\n"
-        "Июнь: от 110€ за ночь\n\n"
-        "Напишите даты, и я подскажу точнее."
-    )
+async def price(message):
+    await message.answer(TEXTS[DEFAULT_LANG]["price"])
 
 
 @router.message(Command("location"))
-async def location(message: Message):
-    await message.answer(
-        "📍 Как добраться:\n\n"
-        "Из аэропорта: метро линии 3 или 5\n"
-        "Из центра: удобно на метро или автобусе\n\n"
-        "Если вы на машине — подскажу парковку."
-    )
+async def location(message):
+    await message.answer(TEXTS[DEFAULT_LANG]["location"])
 
 
 @router.message(Command("faq"))
-async def faq(message: Message):
-    await message.answer(
-        "Частые вопросы:\n\n"
-        "✔ Есть ли горячая вода зимой? — Да, всегда\n"
-        "✔ Шумно ли ночью? — Район спокойный\n"
-        "✔ Есть ли Wi-Fi? — Да\n"
-    )
+async def faq(message):
+    await message.answer(TEXTS[DEFAULT_LANG]["faq"])
 
 
 @router.message()
