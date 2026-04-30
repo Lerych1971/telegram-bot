@@ -84,7 +84,14 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import asyncio
+
+    try:
+        asyncio.run(main())
+    except RuntimeError as e:
+        print("Loop error, restarting with existing loop")
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
 
 
 async def main():
