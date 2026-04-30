@@ -1,26 +1,32 @@
 from os import getenv
 import asyncio
-
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher, Router
+from aiogram.filters import Command
+from aiogram.types import Message
+
 from dotenv import load_dotenv
 
+
+# --- TEXTS ---
 TEXTS = {
     "ru": {
-        "start": "Привет! 👋\nЯ помогу с информацией по лофтам в Валенсии.\n\nДоступные команды:\n/price\n/location\n/faq",
-        "price": "Цены зависят от месяца.\n\nАпрель: от 70€\nИюнь: от 110€\n\nНапишите даты, и я подскажу точнее.",
-        "location": "📍 Как добраться:\n\nИз аэропорта: метро линии 3 или 5\nИз центра: метро или автобус\n\nЕсли вы на машине, подскажу парковку.",
-        "faq": "Частые вопросы:\n\n✔ Есть ли горячая вода зимой? Да\n✔ Шумно ли ночью? Район спокойный\n✔ Есть ли WiFi? Да"
+        "start": "Привет! 👋\nЯ помогу с информацией по лофтам в Валенсии.\n\nКоманды:\n/price\n/location\n/faq",
+        "price": "Апрель: от 70€\nИюнь: от 110€",
+        "location": "Метро 3 или 5 из аэропорта",
+        "faq": "WiFi есть, вода есть, тихо"
     },
     "es": {
-        "start": "¡Hola! 👋\nTe ayudaré con información sobre los lofts en Valencia.\n\nComandos:\n/price\n/location\n/faq",
-        "price": "Los precios dependen del mes.\n\nAbril: desde 70€\nJunio: desde 110€",
-        "location": "📍 Cómo llegar:\n\nDesde el aeropuerto: metro líneas 3 o 5\nDesde el centro: metro o autobús",
-        "faq": "Preguntas frecuentes:\n\n✔ ¿Hay agua caliente? Sí\n✔ ¿Es ruidoso? No\n✔ ¿Hay WiFi? Sí"
+        "start": "¡Hola! 👋\nInformación sobre lofts en Valencia.\n\nComandos:\n/price\n/location\n/faq",
+        "price": "Abril: desde 70€\nJunio: desde 110€",
+        "location": "Metro líneas 3 o 5",
+        "faq": "WiFi sí, agua sí, tranquilo"
     }
 }
 
+
+# --- CONFIG ---
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 
@@ -29,71 +35,40 @@ if not TOKEN:
 
 DEFAULT_LANG = "es"
 
+
+# --- ROUTER ---
 dp = Dispatcher()
 router = Router()
 dp.include_router(router)
 
 
-from aiogram import Bot, Dispatcher, Router
-from aiogram.filters import Command
-from aiogram.types import Message
-from dotenv import load_dotenv
-from os import getenv
-import asyncio
-
-load_dotenv()
-TOKEN = getenv("BOT_TOKEN")
-
-dp = Dispatcher()
-router = Router()
-dp.include_router(router)
-
-
+# --- HANDLERS ---
 @router.message(Command("start"))
-async def start(message):
+async def start(message: Message):
     await message.answer(TEXTS[DEFAULT_LANG]["start"])
 
 
 @router.message(Command("price"))
-async def price(message):
+async def price(message: Message):
     await message.answer(TEXTS[DEFAULT_LANG]["price"])
 
 
 @router.message(Command("location"))
-async def location(message):
+async def location(message: Message):
     await message.answer(TEXTS[DEFAULT_LANG]["location"])
 
 
 @router.message(Command("faq"))
-async def faq(message):
+async def faq(message: Message):
     await message.answer(TEXTS[DEFAULT_LANG]["faq"])
 
 
 @router.message()
 async def fallback(message: Message):
-    await message.answer(
-        "Я пока не всё понимаю 🙂\n"
-        "Попробуйте команды: /price, /location, /faq"
-    )
+    await message.answer("Use /start")
 
 
-async def main():
-    bot = Bot(token=TOKEN)
-    print("Bot started")
-    await dp.start_polling(bot)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    try:
-        asyncio.run(main())
-    except RuntimeError as e:
-        print("Loop error, restarting with existing loop")
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(main())
-
-
+# --- MAIN ---
 async def main():
     bot = Bot(token=TOKEN)
 
@@ -104,6 +79,6 @@ async def main():
     finally:
         await bot.session.close()
 
+
 if __name__ == "__main__":
     asyncio.run(main())
-    
