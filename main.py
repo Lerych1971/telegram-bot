@@ -27,7 +27,7 @@ TOKEN = getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("BOT_TOKEN not found")
 
-DEFAULT_LANG = "ru"
+DEFAULT_LANG = "es"
 
 dp = Dispatcher()
 router = Router()
