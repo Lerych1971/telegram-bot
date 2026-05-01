@@ -111,11 +111,22 @@ async def start_booking(message, lang, nights, month_name, total):
     }
 
     if lang == "ru":
-        await message.answer(f"Итого примерно {total}€.\n\nСколько будет человек?")
+        await message.answer(
+            f"На этот период стоимость примерно {total}€ за 1 человека.\n\n"
+            f"Сколько будет человек?"
+        )
+
     elif lang == "es":
-        await message.answer(f"Total aproximado {total}€.\n\n¿Cuántas personas?")
+        await message.answer(
+            f"Para este período el precio es aproximadamente {total}€ por persona.\n\n"
+            f"¿Cuántas personas?"
+        )
+
     else:
-        await message.answer(f"Total about {total}€.\n\nHow many people?")
+        await message.answer(
+            f"For this period the price is about {total}€ per person.\n\n"
+            f"How many people?"
+        )
 
 
 # --- CONFIG ---
