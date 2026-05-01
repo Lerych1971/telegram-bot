@@ -36,6 +36,21 @@ PRICES = {
     "june": 110
 }
 
+MONTH_NAMES = {
+    "ru": {
+        "april": "апреле",
+        "june": "июне"
+    },
+    "es": {
+        "april": "abril",
+        "june": "junio"
+    },
+    "en": {
+        "april": "April",
+        "june": "June"
+    }
+}
+
 import re
 
 def detect_month(text: str):
@@ -119,13 +134,14 @@ async def handle_text(message: Message):
     if month and nights:
         price_per_night = PRICES.get(month)
         total = price_per_night * nights
+        month_name = MONTH_NAMES[lang][month]
 
         if lang == "ru":
-            await message.answer(f"{nights} ночи в {month} будут стоить примерно {total}€")
+            await message.answer(f"{nights} ночи в {month_name} будут стоить примерно {total}€")
         elif lang == "es":
-            await message.answer(f"{nights} noches en {month} costarán aproximadamente {total}€")
+            await message.answer(f"{nights} noches en {month_name} costarán aproximadamente {total}€")
         else:
-            await message.answer(f"{nights} nights in {month} will cost about {total}€")
+            await message.answer(f"{nights} nights in {month_name} will cost about {total}€")
 
         return
 
