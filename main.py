@@ -6,6 +6,9 @@ from aiogram import Bot, Dispatcher, Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardRemove
+
 from dotenv import load_dotenv
 
 
@@ -31,6 +34,21 @@ TEXTS = {
         "location": "📍 How to get there:\n\nFrom airport: metro lines 3 or 5\nFrom city center: metro or bus\n\nIf you have a car, I’ll suggest parking.",
         "faq": "FAQ:\n\n✔ Hot water in winter? Yes\n✔ Noisy at night? Quiet area\n✔ WiFi? Yes",
         "fallback": "I didn’t understand 🤔\nTry asking about price, location or amenities."    }
+}
+
+YES_NO_KEYBOARDS = {
+    "ru": ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="Да"), KeyboardButton(text="Нет")]],
+        resize_keyboard=True
+    ),
+    "es": ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="Sí"), KeyboardButton(text="No")]],
+        resize_keyboard=True
+    ),
+    "en": ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="Yes"), KeyboardButton(text="No")]],
+        resize_keyboard=True
+    )
 }
 
 PRICES = {
@@ -230,11 +248,20 @@ async def handle_text(message: Message):
             state["step"] = "parking"
 
             if lang == "ru":
-                await message.answer(f"Итого {total}€.\nНужна парковка? (да/нет)")
+                await message.answer(
+                    f"Итого {total}€.\nНужна парковка?",
+                    reply_markup=YES_NO_KEYBOARDS[lang]
+                )
             elif lang == "es":
-                await message.answer(f"Total {total}€.\n¿Necesita parking? (sí/no)")
+                await message.answer(
+                    f"Total {total}€.\n¿Necesita parking?",
+                    reply_markup=YES_NO_KEYBOARDS[lang]
+                )
             else:
-                await message.answer(f"Total {total}€.\nDo you need parking? (yes/no)")
+                await message.answer(
+                    f"Total {total}€.\nDo you need parking?",
+                    reply_markup=YES_NO_KEYBOARDS[lang]
+                )
 
             return
 
@@ -244,11 +271,20 @@ async def handle_text(message: Message):
             state["step"] = "contact"
 
             if lang == "ru":
-                await message.answer("Оставьте ваш телефон или WhatsApp")
+                await message.answer(
+                    "Оставьте ваш телефон или WhatsApp",
+                    reply_markup=ReplyKeyboardRemove()
+                )
             elif lang == "es":
-                await message.answer("Deje su teléfono o WhatsApp")
+                await message.answer(
+                    "Deje su teléfono o WhatsApp",
+                    reply_markup=ReplyKeyboardRemove()
+                )
             else:
-                await message.answer("Leave your phone or WhatsApp")
+                await message.answer(
+                    "Leave your phone or WhatsApp",
+                    reply_markup=ReplyKeyboardRemove()
+                )
             return
 
         # шаг 3 — контакт
