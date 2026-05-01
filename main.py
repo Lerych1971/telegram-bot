@@ -125,6 +125,8 @@ TOKEN = getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("BOT_TOKEN not found")
 
+ADMIN_ID = 73433555
+
 DEFAULT_LANG = "es"
 def detect_lang(text: str):
     text = text.lower()
@@ -186,6 +188,7 @@ async def faq(message: Message):
 async def handle_text(message: Message):
     text = message.text.lower()
     lang = detect_lang(message.text or "")
+    bot = message.bot
 
     user_id = message.from_user.id
 
@@ -223,14 +226,26 @@ async def handle_text(message: Message):
         if state["step"] == "contact":
             state["contact"] = message.text
 
+            text = (
+                f"📥 NEW BOOKING\n\n"
+                f"Месяц: {state['month']}\n"
+                f"Ночей: {state['nights']}\n"
+                f"Сумма: {state['total']}€\n"
+                f"Людей: {state['people']}\n"
+                f"Парковка: {state['parking']}\n"
+                f"Контакт: {state['contact']}"
+            )
+
+            await bot.send_message(ADMIN_ID, text)
+
+            lang = state["lang"]
+
             if lang == "ru":
                 await message.answer("Спасибо! Мы свяжемся с вами 👍")
             elif lang == "es":
                 await message.answer("¡Gracias! Nos pondremos en contacto 👍")
             else:
                 await message.answer("Thanks! We will contact you 👍")
-
-            print("NEW BOOKING:", state)
 
             del user_state[user_id]
             return
