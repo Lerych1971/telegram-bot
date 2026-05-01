@@ -254,15 +254,24 @@ async def handle_text(message: Message):
         if state["step"] == "contact":
             state["contact"] = message.text
 
+            lang_names = {
+                "ru": "русском",
+                "es": "español",
+                "en": "english"
+            }
+
+            lang_label = lang_names.get(state["lang"], "unknown")
+
             text = (
-                f"📥 NEW BOOKING\n\n"
-                f"Месяц: {state['month']}\n"
-                f"Ночей: {state['nights']}\n"
-                f"Сумма: {state['total']}€\n"
-                f"Людей: {state['people']}\n"
-                f"Парковка: {state['parking']}\n"
-                f"Контакт: {state['contact']}"
-            )
+                f"📥 NUEVA RESERVA\n\n"
+                f"Idioma: {lang_label}\n\n"
+                f"📅 Mes: {state['month']}\n"
+                f"🌙 Noches: {state['nights']}\n"
+                f"💶 Total: {state['total']}€\n"
+                f"👥 Personas: {state['people']}\n"
+                f"🚗 Parking: {state['parking']}\n"
+                f"📞 Contacto: {state['contact']}"
+            )   
 
             await bot.send_message(ADMIN_ID, text)
 
