@@ -39,6 +39,8 @@ PRICES = {
     "july": 130
 }
 
+user_state = {}
+
 MONTH_NAMES = {
     "ru": {
         "may": "мае",
@@ -96,6 +98,23 @@ def detect_range(text: str):
             return end - start
 
     return None
+
+async def start_booking(message, lang, nights, month_name, total):
+    user_id = message.from_user.id
+
+    user_state[user_id] = {
+        "step": "people",
+        "nights": nights,
+        "month": month_name,
+        "total": total
+    }
+
+    if lang == "ru":
+        await message.answer(f"Итого примерно {total}€.\n\nСколько будет человек?")
+    elif lang == "es":
+        await message.answer(f"Total aproximado {total}€.\n\n¿Cuántas personas?")
+    else:
+        await message.answer(f"Total about {total}€.\n\nHow many people?")
 
 
 # --- CONFIG ---
@@ -175,15 +194,7 @@ async def handle_text(message: Message):
         total = price_per_night * range_nights
         month_name = MONTH_NAMES[lang][month]
 
-        if lang == "ru":
-            await message.answer(f"{range_nights} ночей в {month_name} будут стоить примерно {total}€")
-
-        elif lang == "es":
-            await message.answer(f"{range_nights} noches en {month_name} costarán aproximadamente {total}€")
-
-        else:
-            await message.answer(f"{range_nights} nights in {month_name} will cost about {total}€")
-
+        await start_booking(message, lang, range_nights, month_name, total)
         return
     
     if month and nights:
@@ -191,13 +202,7 @@ async def handle_text(message: Message):
         total = price_per_night * nights
         month_name = MONTH_NAMES[lang][month]
 
-        if lang == "ru":
-            await message.answer(f"{nights} ночи в {month_name} будут стоить примерно {total}€")
-        elif lang == "es":
-            await message.answer(f"{nights} noches en {month_name} costarán aproximadamente {total}€")
-        else:
-            await message.answer(f"{nights} nights in {month_name} will cost about {total}€")
-
+        await start_booking(message, lang, nights, month_name, total)
         return
 
     # приветствие
