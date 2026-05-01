@@ -31,6 +31,32 @@ TEXTS = {
     }
 }
 
+PRICES = {
+    "april": 70,
+    "june": 110
+}
+
+import re
+
+def detect_month(text: str):
+    text = text.lower()
+
+    if any(w in text for w in ["апрел", "abril", "april"]):
+        return "april"
+
+    if any(w in text for w in ["июн", "junio", "june"]):
+        return "june"
+
+    return None
+
+
+def detect_nights(text: str):
+    match = re.search(r"\d+", text)
+    if match:
+        return int(match.group())
+    return None
+
+
 
 # --- CONFIG ---
 load_dotenv()
@@ -87,6 +113,21 @@ async def faq(message: Message):
 async def handle_text(message: Message):
     text = message.text.lower()
     lang = detect_lang(text)
+    month = detect_month(text)
+    nights = detect_nights(text)
+
+    if month and nights:
+        price_per_night = PRICES.get(month)
+        total = price_per_night * nights
+
+        if lang == "ru":
+            await message.answer(f"{nights} ночи в {month} будут стоить примерно {total}€")
+        elif lang == "es":
+            await message.answer(f"{nights} noches en {month} costarán aproximadamente {total}€")
+        else:
+            await message.answer(f"{nights} nights in {month} will cost about {total}€")
+
+        return
 
     # приветствие
     if any(word in text for word in ["привет", "здрав", "hello", "hi", "hola"]):
