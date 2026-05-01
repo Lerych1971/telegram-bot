@@ -255,9 +255,9 @@ async def handle_text(message: Message):
             state["contact"] = message.text
 
             lang_names = {
-                "ru": "русском",
-                "es": "español",
-                "en": "english"
+                "ru": "на русском",
+                "es": "en español",
+                "en": "in english"
             }
 
             lang_label = lang_names.get(state["lang"], "unknown")
