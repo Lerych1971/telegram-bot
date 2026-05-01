@@ -64,8 +64,40 @@ async def faq(message: Message):
 
 
 @router.message()
-async def fallback(message: Message):
-    await message.answer("Use /start")
+async def handle_text(message: Message):
+    text = message.text.lower()
+
+    # цена
+    if "цена" in text or "сто" in text or "апрел" in text or "июн" in text:
+        await message.answer(TEXTS[DEFAULT_LANG]["price"])
+        return
+
+    if "precio" in text or "abril" in text or "junio" in text:
+        await message.answer(TEXTS["es"]["price"])
+        return
+
+    # как добраться
+    if "как добраться" in text or "аэропорт" in text or "метро" in text:
+        await message.answer(TEXTS[DEFAULT_LANG]["location"])
+        return
+
+    if "como llegar" in text or "aeropuerto" in text or "metro" in text:
+        await message.answer(TEXTS["es"]["location"])
+        return
+
+    # вопросы
+    if "горяч" in text or "шум" in text or "wifi" in text:
+        await message.answer(TEXTS[DEFAULT_LANG]["faq"])
+        return
+
+    if "wifi" in text or "ruido" in text or "agua" in text:
+        await message.answer(TEXTS["es"]["faq"])
+        return
+
+    # если не поняли
+    await message.answer(
+        "Не совсем понял 🤔\nПопробуйте написать про цену, дорогу или удобства."
+    )
 
 
 # --- MAIN ---
