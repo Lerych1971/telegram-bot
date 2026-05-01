@@ -125,7 +125,7 @@ TOKEN = getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("BOT_TOKEN not found")
 
-ADMIN_ID = 73433555
+ADMIN_ID = int(getenv("ADMIN_ID"))
 
 DEFAULT_LANG = "es"
 def detect_lang(text: str):
