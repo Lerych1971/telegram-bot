@@ -198,15 +198,32 @@ async def handle_text(message: Message):
 
         # шаг 1 — количество людей
         if state["step"] == "people":
-            state["people"] = message.text
+            try:
+                people = int(message.text)
+            except:
+                if lang == "ru":
+                    await message.answer("Введите число, например 2")
+                elif lang == "es":
+                    await message.answer("Ingrese un número, por ejemplo 2")
+                else:
+                    await message.answer("Enter a number, for example 2")
+                return
+
+            state["people"] = people
+
+            # пересчёт суммы
+            total = state["total"] * people
+            state["total"] = total
+
             state["step"] = "parking"
 
             if lang == "ru":
-                await message.answer("Нужна парковка? (да/нет)")
+                await message.answer(f"Итого {total}€.\nНужна парковка? (да/нет)")
             elif lang == "es":
-                await message.answer("¿Necesita parking? (sí/no)")
+                await message.answer(f"Total {total}€.\n¿Necesita parking? (sí/no)")
             else:
-                await message.answer("Do you need parking? (yes/no)")
+                await message.answer(f"Total {total}€.\nDo you need parking? (yes/no)")
+
             return
 
         # шаг 2 — парковка
