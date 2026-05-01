@@ -262,7 +262,7 @@ async def handle_text(message: Message):
 
             if len(numbers) >= 2:
                 d1, d2 = numbers[0], numbers[1]
-                month = MONTH_NAMES["es"][state["month"]]
+                month = MONTH_NAMES["es"][state["month"].lower()]
                 dates_es = f"del {d1} al {d2} de {month}"
             else:
                 dates_es = raw
