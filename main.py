@@ -15,20 +15,22 @@ TEXTS = {
         "start": "Привет! 👋\nЯ помогу с информацией по лофтам в Валенсии.\n\nКоманды:\n/price\n/location\n/faq",
         "price": "Апрель: от 70€\nИюнь: от 110€",
         "location": "Метро 3 или 5 из аэропорта",
-        "faq": "WiFi есть, вода есть, тихо"
+        "faq": "WiFi есть, вода есть, тихо",
+        "fallback": "Не совсем понял 🤔\nПопробуйте написать про цену, дорогу или удобства."
     },
     "es": {
         "start": "¡Hola! 👋\nInformación sobre lofts en Valencia.\n\nComandos:\n/price\n/location\n/faq",
         "price": "Abril: desde 70€\nJunio: desde 110€",
         "location": "Metro líneas 3 o 5",
-        "faq": "WiFi sí, agua sí, tranquilo"
+        "faq": "WiFi sí, agua sí, tranquilo",
+        "fallback": "No entendí 🤔\nEscribe sobre precio, ubicación o comodidades."
     },
     "en": {
         "start": "Hello! 👋\nI can help you with lofts in Valencia.\n\nCommands:\n/price\n/location\n/faq",
         "price": "Prices depend on the month.\n\nApril: from 70€ per night\nJune: from 110€ per night\n\nSend your dates and I’ll уточнить.",
         "location": "📍 How to get there:\n\nFrom airport: metro lines 3 or 5\nFrom city center: metro or bus\n\nIf you have a car, I’ll suggest parking.",
-        "faq": "FAQ:\n\n✔ Hot water in winter? Yes\n✔ Noisy at night? Quiet area\n✔ WiFi? Yes"
-    }
+        "faq": "FAQ:\n\n✔ Hot water in winter? Yes\n✔ Noisy at night? Quiet area\n✔ WiFi? Yes",
+        "fallback": "I didn’t understand 🤔\nTry asking about price, location or amenities."    }
 }
 
 PRICES = {
@@ -133,7 +135,7 @@ async def faq(message: Message):
 @router.message()
 async def handle_text(message: Message):
     text = message.text.lower()
-    lang = detect_lang(text)
+    lang = detect_lang(message.text or "")
     month = detect_month(text)
     nights = detect_nights(text)
 
@@ -184,9 +186,9 @@ async def handle_text(message: Message):
         return
 
     # если не поняли
-    await message.answer(
-        "Не совсем понял 🤔\nПопробуйте написать про цену, дорогу или удобства."
-    )
+    lang = detect_lang(message.text or "")
+    await message.answer(TEXTS[lang]["fallback"])
+    
 
 
 # --- MAIN ---
