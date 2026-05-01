@@ -22,6 +22,12 @@ TEXTS = {
         "price": "Abril: desde 70€\nJunio: desde 110€",
         "location": "Metro líneas 3 o 5",
         "faq": "WiFi sí, agua sí, tranquilo"
+    },
+    "en": {
+        "start": "Hello! 👋\nI can help you with lofts in Valencia.\n\nCommands:\n/price\n/location\n/faq",
+        "price": "Prices depend on the month.\n\nApril: from 70€ per night\nJune: from 110€ per night\n\nSend your dates and I’ll уточнить.",
+        "location": "📍 How to get there:\n\nFrom airport: metro lines 3 or 5\nFrom city center: metro or bus\n\nIf you have a car, I’ll suggest parking.",
+        "faq": "FAQ:\n\n✔ Hot water in winter? Yes\n✔ Noisy at night? Quiet area\n✔ WiFi? Yes"
     }
 }
 
@@ -33,7 +39,17 @@ TOKEN = getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("BOT_TOKEN not found")
 
-DEFAULT_LANG = "es"
+DEFAULT_LANG = "ru"
+def detect_lang(text: str):
+    text = text.lower()
+
+    if any(word in text for word in ["precio", "abril", "junio", "hola", "metro"]):
+        return "es"
+
+    if any(word in text for word in ["price", "april", "june", "hello", "how"]):
+        return "en"
+
+    return "ru"
 
 
 # --- ROUTER ---
@@ -45,22 +61,26 @@ dp.include_router(router)
 # --- HANDLERS ---
 @router.message(Command("start"))
 async def start(message: Message):
-    await message.answer(TEXTS[DEFAULT_LANG]["start"])
+    lang = detect_lang(message.text or "")
+    await message.answer(TEXTS[lang]["start"])
 
 
 @router.message(Command("price"))
 async def price(message: Message):
-    await message.answer(TEXTS[DEFAULT_LANG]["price"])
+    lang = detect_lang(message.text or "")
+    await message.answer(TEXTS[lang]["price"])
 
 
 @router.message(Command("location"))
 async def location(message: Message):
-    await message.answer(TEXTS[DEFAULT_LANG]["location"])
+    lang = detect_lang(message.text or "")
+    await message.answer(TEXTS[lang]["location"])
 
 
 @router.message(Command("faq"))
 async def faq(message: Message):
-    await message.answer(TEXTS[DEFAULT_LANG]["faq"])
+    lang = detect_lang(message.text or "")
+    await message.answer(TEXTS[lang]["faq"])
 
 
 @router.message()
