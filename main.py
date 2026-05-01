@@ -13,43 +13,47 @@ from dotenv import load_dotenv
 TEXTS = {
     "ru": {
         "start": "Привет! 👋\nЯ помогу с информацией по лофтам в Валенсии.\n\nКоманды:\n/price\n/location\n/faq",
-        "price": "Апрель: от 70€\nИюнь: от 110€",
+        "price": "Цены зависят от месяца. \n\nМай: от 80€\nИюнь: от 110€\nИюль: от 130€",
         "location": "Метро 3 или 5 из аэропорта",
         "faq": "WiFi есть, вода есть, тихо",
         "fallback": "Не совсем понял 🤔\nПопробуйте написать про цену, дорогу или удобства."
     },
     "es": {
         "start": "¡Hola! 👋\nInformación sobre lofts en Valencia.\n\nComandos:\n/price\n/location\n/faq",
-        "price": "Abril: desde 70€\nJunio: desde 110€",
+        "price": "Los precios dependen del mes.\n\nMayo: desde 80€\nJunio: desde 110€\nJulio: desde 130€",
         "location": "Metro líneas 3 o 5",
         "faq": "WiFi sí, agua sí, tranquilo",
         "fallback": "No entendí 🤔\nEscribe sobre precio, ubicación o comodidades."
     },
     "en": {
         "start": "Hello! 👋\nI can help you with lofts in Valencia.\n\nCommands:\n/price\n/location\n/faq",
-        "price": "Prices depend on the month.\n\nApril: from 70€ per night\nJune: from 110€ per night\n\nSend your dates and I’ll уточнить.",
+        "price": "Prices depend on the month.\n\nMay: from 80€\nJune: from 110€\nJuly: from 130€",
         "location": "📍 How to get there:\n\nFrom airport: metro lines 3 or 5\nFrom city center: metro or bus\n\nIf you have a car, I’ll suggest parking.",
         "faq": "FAQ:\n\n✔ Hot water in winter? Yes\n✔ Noisy at night? Quiet area\n✔ WiFi? Yes",
         "fallback": "I didn’t understand 🤔\nTry asking about price, location or amenities."    }
 }
 
 PRICES = {
-    "april": 70,
-    "june": 110
+    "may": 80,
+    "june": 110,
+    "july": 130
 }
 
 MONTH_NAMES = {
     "ru": {
-        "april": "апреле",
-        "june": "июне"
+        "may": "мае",
+        "june": "июне",
+        "july": "июле"
     },
     "es": {
-        "april": "abril",
-        "june": "junio"
+        "may": "mayo",
+        "june": "junio",
+        "july": "julio"
     },
     "en": {
-        "april": "April",
-        "june": "June"
+        "may": "May",
+        "june": "June",
+        "july": "July"
     }
 }
 
@@ -58,11 +62,14 @@ import re
 def detect_month(text: str):
     text = text.lower()
 
-    if any(w in text for w in ["апрел", "abril", "april"]):
-        return "april"
+    if any(w in text for w in ["май", "mayo", "may"]):
+        return "may"
 
     if any(w in text for w in ["июн", "junio", "june"]):
         return "june"
+
+    if any(w in text for w in ["июл", "julio", "july"]):
+        return "july"
 
     return None
 
