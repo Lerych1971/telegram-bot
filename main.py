@@ -80,6 +80,22 @@ def detect_nights(text: str):
         return int(match.group())
     return None
 
+def detect_range(text: str):
+    import re
+
+    text = text.lower()
+
+    # ищем 2 числа
+    numbers = re.findall(r"\d{1,2}", text)
+
+    if len(numbers) >= 2:
+        start = int(numbers[0])
+        end = int(numbers[1])
+
+        if end > start:
+            return end - start
+
+    return None
 
 
 # --- CONFIG ---
@@ -145,7 +161,24 @@ async def handle_text(message: Message):
     lang = detect_lang(message.text or "")
     month = detect_month(text)
     nights = detect_nights(text)
+    range_nights = detect_range(text)
 
+    if month and range_nights:
+        price_per_night = PRICES.get(month)
+        total = price_per_night * range_nights
+        month_name = MONTH_NAMES[lang][month]
+
+        if lang == "ru":
+            await message.answer(f"{range_nights} ночей в {month_name} будут стоить примерно {total}€")
+
+        elif lang == "es":
+            await message.answer(f"{range_nights} noches en {month_name} costarán aproximadamente {total}€")
+
+        else:
+            await message.answer(f"{range_nights} nights in {month_name} will cost about {total}€")
+
+        return
+    
     if month and nights:
         price_per_night = PRICES.get(month)
         total = price_per_night * nights
