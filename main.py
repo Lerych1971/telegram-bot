@@ -86,10 +86,16 @@ async def faq(message: Message):
 @router.message()
 async def handle_text(message: Message):
     text = message.text.lower()
+    lang = detect_lang(text)
 
+    # приветствие
+    if any(word in text for word in ["привет", "здрав", "hello", "hi", "hola"]):
+        await message.answer(TEXTS[lang]["start"])
+        return
+    
     # цена
     if "цена" in text or "сто" in text or "апрел" in text or "июн" in text:
-        await message.answer(TEXTS[DEFAULT_LANG]["price"])
+        await message.answer(TEXTS[lang]["price"])
         return
 
     if "precio" in text or "abril" in text or "junio" in text:
@@ -98,7 +104,7 @@ async def handle_text(message: Message):
 
     # как добраться
     if "как добраться" in text or "аэропорт" in text or "метро" in text:
-        await message.answer(TEXTS[DEFAULT_LANG]["location"])
+        await message.answer(TEXTS[lang]["location"])
         return
 
     if "como llegar" in text or "aeropuerto" in text or "metro" in text:
@@ -107,7 +113,7 @@ async def handle_text(message: Message):
 
     # вопросы
     if "горяч" in text or "шум" in text or "wifi" in text:
-        await message.answer(TEXTS[DEFAULT_LANG]["faq"])
+        await message.answer(TEXTS[lang]["faq"])
         return
 
     if "wifi" in text or "ruido" in text or "agua" in text:
