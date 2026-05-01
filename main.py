@@ -106,7 +106,8 @@ async def start_booking(message, lang, nights, month_name, total):
         "step": "people",
         "nights": nights,
         "month": month_name,
-        "total": total
+        "total": total,
+        "lang": lang
     }
 
     if lang == "ru":
@@ -190,6 +191,7 @@ async def handle_text(message: Message):
 
     if user_id in user_state:
         state = user_state[user_id]
+        lang = state["lang"]
 
         # шаг 1 — количество людей
         if state["step"] == "people":
