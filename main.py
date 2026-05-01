@@ -80,17 +80,23 @@ TOKEN = getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("BOT_TOKEN not found")
 
-DEFAULT_LANG = "ru"
+DEFAULT_LANG = "es"
 def detect_lang(text: str):
     text = text.lower()
 
+    # испанский
     if any(word in text for word in ["precio", "abril", "junio", "hola", "metro"]):
         return "es"
 
+    # английский
     if any(word in text for word in ["price", "april", "june", "hello", "how"]):
         return "en"
 
-    return "ru"
+    # русский
+    if any(word in text for word in ["цена", "апрель", "июнь", "привет", "метро"]):
+        return "ru"
+
+    return DEFAULT_LANG
 
 
 # --- ROUTER ---
