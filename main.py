@@ -99,7 +99,7 @@ def detect_range(text: str):
 
     return None
 
-async def start_booking(message, lang, nights, month_name, total):
+async def start_booking(message, lang, nights, month_name, total, dates_text):
     user_id = message.from_user.id
 
     user_state[user_id] = {
@@ -107,7 +107,8 @@ async def start_booking(message, lang, nights, month_name, total):
         "nights": nights,
         "month": month_name,
         "total": total,
-        "lang": lang
+        "lang": lang,
+        "user_dates": dates_text
     }
 
     if lang == "ru":
@@ -254,6 +255,18 @@ async def handle_text(message: Message):
         if state["step"] == "contact":
             state["contact"] = message.text
 
+            raw = state["user_dates"]
+
+            import re
+            numbers = re.findall(r"\d{1,2}", raw)
+
+            if len(numbers) >= 2:
+                d1, d2 = numbers[0], numbers[1]
+                month = state["month"]
+                dates_es = f"del {d1} al {d2} de {month}"
+            else:
+                dates_es = raw
+
             lang_names = {
                 "ru": "ruso",
                 "es": "español",
@@ -274,7 +287,7 @@ async def handle_text(message: Message):
             text = (
                 f"📥 NUEVA RESERVA\n\n"
                 f"Idioma: {lang_label}\n\n"
-                f"📅 Mes: {state['month']}\n"
+                f"📅 Fechas: {dates_es}\n"
                 f"🌙 Noches: {state['nights']}\n"
                 f"💶 Total: {state['total']}€\n"
                 f"👥 Personas: {state['people']}\n"
@@ -299,13 +312,14 @@ async def handle_text(message: Message):
     month = detect_month(text)
     nights = detect_nights(text)
     range_nights = detect_range(text)
+    dates_text = text
 
     if month and range_nights:
         price_per_night = PRICES.get(month)
         total = price_per_night * range_nights
         month_name = MONTH_NAMES[lang][month]
 
-        await start_booking(message, lang, range_nights, month_name, total)
+        await start_booking(message, lang, range_nights, month_name, total, dates_text)
         return
     
     if month and nights:
@@ -313,7 +327,7 @@ async def handle_text(message: Message):
         total = price_per_night * nights
         month_name = MONTH_NAMES[lang][month]
 
-        await start_booking(message, lang, nights, month_name, total)
+        await start_booking(message, lang, nights, month_name, total, dates_text)
         return
 
     # приветствие
