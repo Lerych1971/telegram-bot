@@ -93,17 +93,17 @@ DEFAULT_LANG = "es"
 def detect_lang(text: str):
     text = text.lower()
 
-    # испанский
-    if any(word in text for word in ["precio", "abril", "junio", "hola", "metro"]):
-        return "es"
-
     # английский
-    if any(word in text for word in ["price", "april", "june", "hello", "how"]):
+    if any(word in text for word in ["price", "may", "june", "july", "hello", "how"]):
         return "en"
 
     # русский
-    if any(word in text for word in ["цена", "апрель", "июнь", "привет", "метро"]):
+    if any(word in text for word in ["цена", "май", "июнь", "июль", "привет", "метро"]):
         return "ru"
+
+    # испанский
+    if any(word in text for word in ["precio", "mayo", "junio", "julio", "hola", "metro"]):
+        return "es"
 
     return DEFAULT_LANG
 
