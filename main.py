@@ -255,13 +255,22 @@ async def handle_text(message: Message):
             state["contact"] = message.text
 
             lang_names = {
-                "ru": "на русском",
-                "es": "en español",
-                "en": "in english"
+                "ru": "ruso",
+                "es": "español",
+                "en": "inglés"
             }
 
             lang_label = lang_names.get(state["lang"], "unknown")
 
+            parking_raw = state["parking"].lower()
+
+            if parking_raw in ["да", "yes", "sí", "si"]:
+                parking = "sí"
+            elif parking_raw in ["нет", "no"]:
+                parking = "no"
+            else:
+                parking = parking_raw
+            
             text = (
                 f"📥 NUEVA RESERVA\n\n"
                 f"Idioma: {lang_label}\n\n"
@@ -269,7 +278,7 @@ async def handle_text(message: Message):
                 f"🌙 Noches: {state['nights']}\n"
                 f"💶 Total: {state['total']}€\n"
                 f"👥 Personas: {state['people']}\n"
-                f"🚗 Parking: {state['parking']}\n"
+                f"🚗 Parking: {parking}\n"
                 f"📞 Contacto: {state['contact']}"
             )   
 
