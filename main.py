@@ -185,6 +185,54 @@ async def faq(message: Message):
 async def handle_text(message: Message):
     text = message.text.lower()
     lang = detect_lang(message.text or "")
+
+    user_id = message.from_user.id
+
+    if user_id in user_state:
+        state = user_state[user_id]
+
+        # шаг 1 — количество людей
+        if state["step"] == "people":
+            state["people"] = message.text
+            state["step"] = "parking"
+
+            if lang == "ru":
+                await message.answer("Нужна парковка? (да/нет)")
+            elif lang == "es":
+                await message.answer("¿Necesita parking? (sí/no)")
+            else:
+                await message.answer("Do you need parking? (yes/no)")
+            return
+
+        # шаг 2 — парковка
+        if state["step"] == "parking":
+            state["parking"] = message.text
+            state["step"] = "contact"
+
+            if lang == "ru":
+                await message.answer("Оставьте ваш телефон или WhatsApp")
+            elif lang == "es":
+                await message.answer("Deje su teléfono o WhatsApp")
+            else:
+                await message.answer("Leave your phone or WhatsApp")
+            return
+
+        # шаг 3 — контакт
+        if state["step"] == "contact":
+            state["contact"] = message.text
+
+            if lang == "ru":
+                await message.answer("Спасибо! Мы свяжемся с вами 👍")
+            elif lang == "es":
+                await message.answer("¡Gracias! Nos pondremos en contacto 👍")
+            else:
+                await message.answer("Thanks! We will contact you 👍")
+
+            print("NEW BOOKING:", state)
+
+            del user_state[user_id]
+            return
+
     month = detect_month(text)
     nights = detect_nights(text)
     range_nights = detect_range(text)
