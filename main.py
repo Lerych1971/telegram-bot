@@ -62,13 +62,13 @@ import re
 def detect_month(text: str):
     text = text.lower()
 
-    if any(w in text for w in ["май", "mayo", "may"]):
+    if any(w in text for w in ["май", "мая", "mayo", "may"]):
         return "may"
 
-    if any(w in text for w in ["июн", "junio", "june"]):
+    if any(w in text for w in ["июн", "июня", "junio", "june"]):
         return "june"
 
-    if any(w in text for w in ["июл", "julio", "july"]):
+    if any(w in text for w in ["июл", "июля", "julio", "july"]):
         return "july"
 
     return None
@@ -109,7 +109,7 @@ DEFAULT_LANG = "es"
 def detect_lang(text: str):
     text = text.lower()
 
-    # испанский СНАЧАЛА
+    # испанский
     if any(word in text for word in ["precio", "mayo", "junio", "julio", "hola", "metro"]):
         return "es"
 
@@ -117,8 +117,15 @@ def detect_lang(text: str):
     if any(word in text for word in ["price", "may", "june", "july", "hello", "how"]):
         return "en"
 
-    # русский
-    if any(word in text for word in ["цена", "май", "июнь", "июль", "привет", "метро"]):
+    # русский (расширили формы)
+    if any(word in text for word in [
+        "цена",
+        "май", "мая",
+        "июнь", "июня",
+        "июль", "июля",
+        "привет",
+        "метро"
+    ]):
         return "ru"
 
     return DEFAULT_LANG
