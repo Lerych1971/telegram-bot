@@ -54,21 +54,45 @@ YES_NO_KEYBOARDS = {
 }
 
 KNOWLEDGE = """
-The lofts are located in Valencia, near Benimaclet and metro lines 3 and 5.
+LOFTS INFORMATION
+
+Address:
+Carrer de Peníscola 19 Bajo, Valencia.
+
+Area:
+Quiet residential area between Benicalap, Torrefiel and Benimaclet.
+
+Transport:
+Nearby metro stations:
+- Machado
+- Benimaclet
+
+Metro lines:
+3 and 5.
+
+Airport:
+Direct connection from Valencia Airport by metro lines 3 and 5.
+
+Travel time:
+Around 25-35 minutes from airport depending on time.
 
 Nearby:
-- metro
-- tram
 - supermarkets
 - cafes
+- tram
+- public transport
 
-The area is calm and well connected to the airport and city center.
+Environment:
+Quiet and safe area, close to city center.
 
 Website:
 https://www.mainloftsvalencia.com/guias-de-valencia/
 
-Do not invent services that are not confirmed.
-Do not promise transfer or parking unless explicitly mentioned.
+Google Maps:
+https://maps.google.com/?q=Carrer+de+Peniscola+19+Valencia 
+
+Do not invent services or guarantees.
+Do not promise transfer unless confirmed.
 """
 
 PRICES = {
