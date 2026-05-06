@@ -123,12 +123,15 @@ def ask_ai(text):
     try:
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
+            temperature=0.4,
             messages=[
                 {
                     "role": "system",
                     "content": (
                         "You are assistant for loft rentals in Valencia. "
                         "Answer shortly and naturally. "
+                        "Do not invent services or features that were not mentioned. "
+                        "If you do not know something, say that the manager will уточнить details. "
                         "Reply in the same language as the user."
                     )
                 },
