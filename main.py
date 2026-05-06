@@ -452,7 +452,15 @@ async def handle_text(message: Message):
         return
 
     # приветствие
-    if any(word in text for word in ["привет", "здрав", "hello", "hi", "hola"]):
+    greetings = [
+        "привет",
+        "здравствуйте",
+        "hello",
+        "hi",
+        "hola"
+    ]
+
+    if text.strip() in greetings:
         await message.answer(TEXTS[lang]["start"])
         return
     
