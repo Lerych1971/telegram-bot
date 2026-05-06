@@ -10,6 +10,8 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.types import ReplyKeyboardRemove
 
 from dotenv import load_dotenv
+from openai import OpenAI
+
 
 
 # --- TEXTS ---
@@ -117,6 +119,33 @@ def detect_range(text: str):
 
     return None
 
+def ask_ai(text):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4.1-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are assistant for loft rentals in Valencia. "
+                        "Answer shortly and naturally. "
+                        "Reply in the same language as the user."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": text
+                }
+            ],
+            max_tokens=120
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        print("AI ERROR:", e)
+        return None
+
 async def start_booking(message, lang, nights, month_name, total, dates_text):
     user_id = message.from_user.id
 
@@ -151,6 +180,10 @@ async def start_booking(message, lang, nights, month_name, total, dates_text):
 # --- CONFIG ---
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
+OPENAI_API_KEY = getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
+
 
 if not TOKEN:
     raise ValueError("BOT_TOKEN not found")
@@ -399,7 +432,13 @@ async def handle_text(message: Message):
         await message.answer(TEXTS["es"]["faq"])
         return
 
-    # если не поняли
+    # AI fallback
+    ai_answer = ask_ai(text)
+
+    if ai_answer:
+        await message.answer(ai_answer)
+        return
+
     lang = detect_lang(message.text or "")
     await message.answer(TEXTS[lang]["fallback"])
     
