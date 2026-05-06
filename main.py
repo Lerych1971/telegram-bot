@@ -53,6 +53,24 @@ YES_NO_KEYBOARDS = {
     )
 }
 
+KNOWLEDGE = """
+The lofts are located in Valencia, near Benimaclet and metro lines 3 and 5.
+
+Nearby:
+- metro
+- tram
+- supermarkets
+- cafes
+
+The area is calm and well connected to the airport and city center.
+
+Website:
+https://www.mainloftsvalencia.com/guias-de-valencia/
+
+Do not invent services that are not confirmed.
+Do not promise transfer or parking unless explicitly mentioned.
+"""
+
 PRICES = {
     "may": 80,
     "june": 110,
@@ -128,11 +146,17 @@ def ask_ai(text):
                 {
                     "role": "system",
                     "content": (
-                        "You are assistant for loft rentals in Valencia. "
-                        "Answer shortly and naturally. "
-                        "Do not invent services or features that were not mentioned. "
-                        "If you do not know something, say that the manager will уточнить details. "
-                        "Reply in the same language as the user."
+                        f"""
+                        You are assistant for loft rentals in Valencia.
+
+                        Use this information:
+
+                        {KNOWLEDGE}
+
+                        Reply shortly and naturally.
+                        Reply in the same language as the user.
+                        Do not invent services or features.
+                        """
                     )
                 },
                 {
@@ -417,24 +441,7 @@ async def handle_text(message: Message):
         await message.answer(TEXTS["es"]["price"])
         return
 
-    # как добраться
-    if "как добраться" in text or "аэропорт" in text or "метро" in text:
-        await message.answer(TEXTS[lang]["location"])
-        return
-
-    if "como llegar" in text or "aeropuerto" in text or "metro" in text:
-        await message.answer(TEXTS["es"]["location"])
-        return
-
-    # вопросы
-    if "горяч" in text or "шум" in text or "wifi" in text:
-        await message.answer(TEXTS[lang]["faq"])
-        return
-
-    if "wifi" in text or "ruido" in text or "agua" in text:
-        await message.answer(TEXTS["es"]["faq"])
-        return
-
+    
     # AI fallback
     ai_answer = ask_ai(text)
 
