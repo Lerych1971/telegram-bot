@@ -103,6 +103,8 @@ PRICES = {
 
 user_state = {}
 
+dialog_context = {}
+
 MONTH_NAMES = {
     "ru": {
         "may": "мае",
@@ -163,6 +165,9 @@ def detect_range(text: str):
 
 def ask_ai(text):
     try:
+        global current_user_id
+        previous_context = dialog_context.get(current_user_id, "")
+
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
             temperature=0.4,
@@ -185,13 +190,25 @@ def ask_ai(text):
                 },
                 {
                     "role": "user",
-                    "content": text
+                    "content": f"""
+                Previous conversation:
+                {previous_context}
+
+                Current message:
+                {text}
+                """
                 }
             ],
             max_tokens=120
         )
+        ai_text = response.choices[0].message.content
 
-        return response.choices[0].message.content
+        dialog_context[current_user_id] = f"""
+        User: {text}
+        Assistant: {ai_text}
+        """[-2000:]
+
+        return ai_text
 
     except Exception as e:
         print("AI ERROR:", e)
