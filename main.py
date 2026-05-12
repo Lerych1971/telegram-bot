@@ -212,7 +212,7 @@ def ask_ai(text):
 
     except Exception as e:
         print("AI ERROR:", e)
-        return None
+        return f"AI ERROR: {e}"
 
 async def start_booking(message, lang, nights, month_name, total, dates_text):
     user_id = message.from_user.id
