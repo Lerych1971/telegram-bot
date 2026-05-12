@@ -51,8 +51,43 @@ BOOKING_SUBSTRINGS = (
     "reserva", "booking", "reserve",
 )
 
-RU_PRICE_SUBSTRINGS = ("цена", "сто", "апрел", "июн")
-ES_PRICE_SUBSTRINGS = ("precio", "abril", "junio")
+# Loft / stay pricing only — avoid "сто" matching "стоит" (e.g. taxi fare questions).
+LOFT_RENTAL_CONTEXT_SUBSTRINGS = (
+    "loft", "лофт", "apartment", "апарт", "квартир", "жиль", "housing",
+    "accommodation", "stay", "аренда", "alquiler", "alojamiento",
+    "ночь", "ночи", "ночей", "noche", "noches", "nights", "night",
+    "за ночь", "per night", "сутки", "посуточ", "прожив",
+)
+
+TAXI_OR_RIDEHAUL_SUBSTRINGS = (
+    "такси", "taxi", "uber", "bolt", "cabify", "free now",
+)
+
+
+def _has_loft_rental_context(tl: str) -> bool:
+    return any(s in tl for s in LOFT_RENTAL_CONTEXT_SUBSTRINGS)
+
+
+def _is_loft_pricing_intent(tl: str) -> bool:
+    """Static /month loft price card — not taxi, food, or generic 'how much'."""
+    if any(s in tl for s in TAXI_OR_RIDEHAUL_SUBSTRINGS):
+        return False
+
+    month_ok = detect_month(tl) is not None
+
+    if "цена" in tl or "стоимость" in tl or "прайс" in tl:
+        return _has_loft_rental_context(tl) or month_ok
+
+    if "апрел" in tl or "июн" in tl:
+        return month_ok
+
+    if "precio" in tl or "abril" in tl or "junio" in tl:
+        return _has_loft_rental_context(tl) or month_ok
+
+    if "price" in tl:
+        return _has_loft_rental_context(tl) or month_ok
+
+    return False
 
 LOCATION_SUBSTRINGS = ("location", "ubicacion", "ubicación", "адрес")
 FAQ_SUBSTRINGS = ("faq", "wifi", "wi-fi")
@@ -172,9 +207,7 @@ def detect_intent(text: str) -> str:
         return "greeting"
     if is_booking_intent(tl):
         return "booking"
-    if any(s in tl for s in RU_PRICE_SUBSTRINGS) or any(
-        s in tl for s in ES_PRICE_SUBSTRINGS
-    ):
+    if _is_loft_pricing_intent(tl):
         return "price"
     if any(s in tl for s in LOCATION_SUBSTRINGS):
         return "location"
@@ -186,12 +219,11 @@ def detect_intent(text: str) -> str:
 AI_REPLY_FALLBACK = "Извините, я не смог ответить."
 
 SOFT_GROUNDING_RULES = """
-Trust calibration (preferential anchors, not a strict whitelist):
-Prefer facts from PREFERRED VERIFIED FACTS when they appear in the user message.
-Stay conversational and helpful even when the list is thin.
-Do not state exact walking minutes, distances in km/m, turn-by-turn routes, street-level addresses, or opening hours unless they appear there with matching confidence.
-You may still describe neighborhoods and categories (e.g. cafes, pharmacies exist in the area) without naming unlisted venues.
-If the user needs precision, suggest checking a maps app or official source.
+Trust calibration (useful local helper first, careful with razor-sharp facts):
+Prefer lines from PREFERRED VERIFIED FACTS when they help the answer.
+Be warm, practical, and proactive: typical local patterns, ballpark ranges, and how residents usually handle things are welcome when reasonable.
+Do not invent specific venue names, street addresses, opening hours, turn-by-turn routes, or exact walking minutes/km unless they appear in that block with matching confidence.
+Avoid sounding like a legal disclaimer; do not repeatedly tell the user to open Google or maps unless they clearly need door-level precision.
 """
 
 
@@ -647,7 +679,8 @@ async def handle_text(message: Message):
         return
 
     if intent == "price":
-        if any(s in text for s in ES_PRICE_SUBSTRINGS):
+        tl = text.lower()
+        if any(s in tl for s in ("precio", "abril", "junio", "mayo", "julio")):
             print("[pipeline] intent router: price (es keywords)")
             await safe_answer(message, TEXTS["es"]["price"])
         else:

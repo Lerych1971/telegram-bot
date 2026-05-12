@@ -16,6 +16,7 @@ TRANSPORT_KEYWORDS = (
     "metro", "метро", "aeropuerto", "airport", "аэропорт", "bus", "автобус",
     "línea", "linea", "line ", "линия", "machado", "benimaclet",
     "transport", "транспорт", "ruta", "how to get", "cómo llegar", "como llegar",
+    "такси", "taxi", "uber", "bolt", "cabify",
 )
 
 PHARMACY_KEYWORDS = (
@@ -204,20 +205,18 @@ def format_grounding_block(bundle: dict) -> str:
             )
     else:
         lines.append(
-            "- (no curated venue rows for this topic in local JSON — stay helpful "
-            "with neighborhood-level guidance; do not invent specific venue names, "
-            "addresses, minutes, km, or routes.)"
+            "- (no extra curated venue rows for this topic — still give friendly "
+            "neighborhood-level advice; do not fabricate specific venue names, "
+            "exact addresses, minute-level timings, or km.)"
         )
 
     tag = bundle.get("policy_tag", "MEDIUM_HEDGE")
     tier = bundle.get("dominant_tier", "medium")
     lines.append(
         f"CONFIDENCE_POLICY_TAG: {tag} | dominant_data_tier: {tier}. "
-        "Match your certainty to data tier: HIGH = clear factual tone for those "
-        "lines only; MEDIUM = softer phrasing ('several options nearby', 'guests "
-        "often use maps'); LOW or unknown numbers = never sound like GPS — point "
-        "to maps / official sources for exact routes, walking times, distances, "
-        "and opening hours."
+        "HIGH lines may sound factual; MEDIUM = natural local guidance without "
+        "GPS-level precision; for unknowns skip invented numbers—give ranges or "
+        "habits instead of pushing the user to apps repeatedly."
     )
     return "\n".join(lines)
 

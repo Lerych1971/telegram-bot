@@ -5,7 +5,7 @@
     "district": "Valencia metro network",
     "confidence": "high",
     "verified_at": "2026-05-12",
-    "notes": "Direct connection from Valencia Airport by lines 3 and 5; travel time to the area is often around 25–35 minutes depending on time of day — confirm in a trip planner app."
+    "notes": "Direct connection from Valencia Airport by lines 3 and 5; many rides take about 25–35 minutes to this part of the city depending on time of day—treat timing as orientational."
   },
   {
     "id": "metro_machado",
@@ -13,7 +13,7 @@
     "district": "Near loft area",
     "confidence": "high",
     "verified_at": "2026-05-12",
-    "notes": "One of the nearby stations referenced for the loft area; verify walking route on maps."
+    "notes": "One of the nearby stations referenced for the loft area; last-mile walking varies by exact address."
   },
   {
     "id": "metro_benimaclet",
@@ -21,6 +21,14 @@
     "district": "Benimaclet",
     "confidence": "high",
     "verified_at": "2026-05-12",
-    "notes": "Nearby station referenced for the loft area; verify walking route on maps."
+    "notes": "Nearby station referenced for the loft area; last-mile walking varies by exact address."
+  },
+  {
+    "id": "taxi_airport_to_benimaclet_ballpark",
+    "name": "Taxi (airport → Benimaclet / similar city area, typical daytime ballpark)",
+    "district": "Valencia",
+    "confidence": "medium",
+    "verified_at": "2026-05-12",
+    "notes": "Guests commonly pay roughly €20–35 depending on traffic, time of day, and exact drop-off—orientational, not a fixed quote."
   }
 ]
