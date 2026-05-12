@@ -249,6 +249,10 @@ def ask_ai(text, user_id, grounding_bundle=None):
                         Reply shortly and naturally.
                         Reply in the same language as the user.
                         Do not invent services or features.
+                        Style: stay warm and conversational, but lean and practical—
+                        concrete tips and examples over long atmosphere descriptions;
+                        skip stacked filler adjectives; use a short paragraph or a few
+                        tight bullets when listing options (no essay walls).
                         """
         ]
         if grounding_bundle and grounding_bundle.get("category"):
@@ -276,7 +280,7 @@ def ask_ai(text, user_id, grounding_bundle=None):
             model="gpt-4.1-mini",
             temperature=0.4,
             messages=messages,
-            max_tokens=120,
+            max_tokens=240,
         )
 
         if response is None:
