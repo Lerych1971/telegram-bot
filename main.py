@@ -15,6 +15,8 @@ from aiogram.types import ReplyKeyboardRemove
 from dotenv import load_dotenv
 from openai import OpenAI
 
+import grounding
+
 
 # --- TEXTS ---
 TEXTS = {
@@ -183,8 +185,17 @@ def detect_intent(text: str) -> str:
 
 AI_REPLY_FALLBACK = "Извините, я не смог ответить."
 
+SOFT_GROUNDING_RULES = """
+Trust calibration (preferential anchors, not a strict whitelist):
+Prefer facts from PREFERRED VERIFIED FACTS when they appear in the user message.
+Stay conversational and helpful even when the list is thin.
+Do not state exact walking minutes, distances in km/m, turn-by-turn routes, street-level addresses, or opening hours unless they appear there with matching confidence.
+You may still describe neighborhoods and categories (e.g. cafes, pharmacies exist in the area) without naming unlisted venues.
+If the user needs precision, suggest checking a maps app or official source.
+"""
 
-def ask_ai(text, user_id):
+
+def ask_ai(text, user_id, grounding_bundle=None):
     preview = text if len(text) <= 200 else text[:200] + "…"
     print(f"[pipeline] OpenAI request user_id={user_id} text_preview={preview!r}")
     try:
@@ -193,26 +204,41 @@ def ask_ai(text, user_id):
             raw_hist if isinstance(raw_hist, list) else []
         )
 
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    f"""
+        system_parts = [
+            """
                         You are assistant for loft rentals in Valencia.
 
                         Use this information:
 
-                        {KNOWLEDGE}
+                        """
+            + KNOWLEDGE
+            + """
 
                         Reply shortly and naturally.
                         Reply in the same language as the user.
                         Do not invent services or features.
                         """
-                ),
+        ]
+        if grounding_bundle and grounding_bundle.get("category"):
+            system_parts.append(SOFT_GROUNDING_RULES)
+
+        system_content = "\n".join(system_parts)
+
+        messages = [
+            {
+                "role": "system",
+                "content": system_content,
             }
         ]
         messages.extend(history)
-        messages.append({"role": "user", "content": text})
+
+        user_content = text
+        if grounding_bundle and grounding_bundle.get("category"):
+            block = grounding.format_grounding_block(grounding_bundle)
+            if block:
+                user_content = block + "\n\nUser question:\n" + text
+
+        messages.append({"role": "user", "content": user_content})
 
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
@@ -326,6 +352,8 @@ with open(
     encoding="utf-8",
 ) as _knowledge_file:
     KNOWLEDGE = _knowledge_file.read()
+
+grounding.load_places()
 
 TOKEN = getenv("BOT_TOKEN")
 OPENAI_API_KEY = getenv("OPENAI_API_KEY")
@@ -641,7 +669,15 @@ async def handle_text(message: Message):
         return
 
     print(f"[pipeline] AI fallback user_id={user_id}")
-    ai_answer = ask_ai(text, user_id)
+    places_data = grounding.load_places()
+    place_category = grounding.detect_place_category(text)
+    grounding_bundle = grounding.build_grounding_bundle(place_category, places_data)
+    print(
+        "[pipeline] grounding: detect_place_category="
+        f"{place_category!r} policy={grounding_bundle.get('policy_tag')!r} "
+        f"dominant_tier={grounding_bundle.get('dominant_tier')!r}"
+    )
+    ai_answer = ask_ai(text, user_id, grounding_bundle)
 
     print(f"[pipeline] AI fallback result preview={ai_answer[:200]!r}")
 

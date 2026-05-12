@@ -1,0 +1,10 @@
+[
+  {
+    "id": "pharmacies_neighborhood_pattern",
+    "name": "Pharmacies (farmacias) in Benimaclet / surrounding neighborhoods",
+    "district": "Benimaclet and nearby",
+    "confidence": "medium",
+    "verified_at": "2026-05-12",
+    "notes": "Several pharmacies serve residential areas like this; exact branch, hours, and 24h guard (farmacia de guardia) rotate — always confirm on maps or the official regional pharmacy list."
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "metro_lines_airport",
+    "name": "Metro lines 3 and 5 (airport connection)",
+    "district": "Valencia metro network",
+    "confidence": "high",
+    "verified_at": "2026-05-12",
+    "notes": "Direct connection from Valencia Airport by lines 3 and 5; travel time to the area is often around 25–35 minutes depending on time of day — confirm in a trip planner app."
+  },
+  {
+    "id": "metro_machado",
+    "name": "Machado metro station",
+    "district": "Near loft area",
+    "confidence": "high",
+    "verified_at": "2026-05-12",
+    "notes": "One of the nearby stations referenced for the loft area; verify walking route on maps."
+  },
+  {
+    "id": "metro_benimaclet",
+    "name": "Benimaclet metro station",
+    "district": "Benimaclet",
+    "confidence": "high",
+    "verified_at": "2026-05-12",
+    "notes": "Nearby station referenced for the loft area; verify walking route on maps."
+  }
+]
