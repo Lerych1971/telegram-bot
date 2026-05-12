@@ -200,7 +200,7 @@ def ask_ai(text, user_id):
             ],
             max_tokens=120
         )
-        ai_text = response.choices[0].message.content
+        ai_text = response.choices[0].message.content or "Извините, я не смог ответить."
 
         dialog_context[user_id] = f"""
         User: {text}
@@ -492,7 +492,9 @@ async def handle_text(message: Message):
     
     # AI fallback
     ai_answer = ask_ai(text)
-
+    
+    print("AI ANSWER:", ai_answer)
+    
     if ai_answer:
         await message.answer(ai_answer)
         return
