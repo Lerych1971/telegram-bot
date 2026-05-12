@@ -163,10 +163,9 @@ def detect_range(text: str):
 
     return None
 
-def ask_ai(text):
+def ask_ai(text, user_id):
     try:
-        global current_user_id
-        previous_context = dialog_context.get(current_user_id, "")
+        previous_context = dialog_context.get(user_id, "")
 
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
@@ -203,7 +202,7 @@ def ask_ai(text):
         )
         ai_text = response.choices[0].message.content
 
-        dialog_context[current_user_id] = f"""
+        dialog_context[user_id] = f"""
         User: {text}
         Assistant: {ai_text}
         """[-2000:]
