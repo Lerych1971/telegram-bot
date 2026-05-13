@@ -219,11 +219,14 @@ def detect_intent(text: str) -> str:
 AI_REPLY_FALLBACK = "Извините, я не смог ответить."
 
 SOFT_GROUNDING_RULES = """
-Trust calibration (useful local helper first, careful with razor-sharp facts):
-Prefer lines from PREFERRED VERIFIED FACTS when they help the answer.
-Be warm, practical, and proactive: typical local patterns, ballpark ranges, and how residents usually handle things are welcome when reasonable.
-Do not invent specific venue names, street addresses, opening hours, turn-by-turn routes, or exact walking minutes/km unless they appear in that block with matching confidence.
-Avoid sounding like a legal disclaimer; do not repeatedly tell the user to open Google or maps unless they clearly need door-level precision.
+Grounding context (reference material, not a script):
+The PREFERRED VERIFIED FACTS block below is background context—use it when relevant,
+but always respond to the actual meaning and tone of the user's message first.
+If the user is joking, emotional, or asking something unrelated to the grounding topic,
+answer the real question naturally; do not parrot transport/pharmacy snippets at random.
+Be direct and practical: share typical local patterns, ballpark ranges, and common-sense
+advice confidently. Only hold back on exact addresses, opening hours, or turn-by-turn
+routes you have not seen in the verified block.
 """
 
 
@@ -249,10 +252,13 @@ def ask_ai(text, user_id, grounding_bundle=None):
                         Reply shortly and naturally.
                         Reply in the same language as the user.
                         Do not invent services or features.
-                        Style: stay warm and conversational, but lean and practical—
-                        concrete tips and examples over long atmosphere descriptions;
-                        skip stacked filler adjectives; use a short paragraph or a few
-                        tight bullets when listing options (no essay walls).
+                        Style: friendly local helper who gives straight practical answers;
+                        concrete tips over fluffy descriptions; short paragraph or a few
+                        tight bullets, no essay walls.
+                        You can make reasonable everyday assumptions (e.g. pharmacies
+                        exist near residential metro stops, taxis cost a typical range).
+                        Read the user's tone: if they joke or exaggerate, respond
+                        like a human—acknowledge the tone before any practical info.
                         """
         ]
         if grounding_bundle and grounding_bundle.get("category"):
@@ -268,13 +274,16 @@ def ask_ai(text, user_id, grounding_bundle=None):
         ]
         messages.extend(history)
 
-        user_content = text
         if grounding_bundle and grounding_bundle.get("category"):
             block = grounding.format_grounding_block(grounding_bundle)
             if block:
-                user_content = block + "\n\nUser question:\n" + text
+                messages.append({"role": "user", "content": (
+                    "[Reference context — use only if it fits the real question]\n"
+                    + block
+                )})
+                messages.append({"role": "assistant", "content": "Got it, I'll keep that context in mind."})
 
-        messages.append({"role": "user", "content": user_content})
+        messages.append({"role": "user", "content": text})
 
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
