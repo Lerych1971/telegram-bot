@@ -89,7 +89,7 @@ def _is_loft_pricing_intent(tl: str) -> bool:
 
     return False
 
-LOCATION_SUBSTRINGS = ("location", "ubicacion", "ubicación", "адрес")
+LOCATION_SUBSTRINGS = ("location",)
 FAQ_SUBSTRINGS = ("faq", "wifi", "wi-fi")
 
 PARKING_YES = frozenset({"да", "yes", "sí", "si"})

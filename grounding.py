@@ -13,10 +13,14 @@ _PLACES_CACHE: dict[str, list] | None = None
 _VALID_CONFIDENCE = frozenset({"high", "medium", "low"})
 
 TRANSPORT_KEYWORDS = (
-    "metro", "метро", "aeropuerto", "airport", "аэропорт", "bus", "автобус",
-    "línea", "linea", "line ", "линия", "machado", "benimaclet",
-    "transport", "транспорт", "ruta", "how to get", "cómo llegar", "como llegar",
+    "metro", "метро", "aeropuerto", "airport", "аэропорт",
+    "автобус до", "bus to", "bus from",
+    "línea 3", "línea 5", "linea 3", "linea 5", "line 3", "line 5",
+    "линия 3", "линия 5",
+    "machado", "benimaclet",
+    "как доехать", "как добраться", "how to get", "cómo llegar", "como llegar",
     "такси", "taxi", "uber", "bolt", "cabify",
+    "трансфер", "transfer",
 )
 
 PHARMACY_KEYWORDS = (
@@ -24,8 +28,9 @@ PHARMACY_KEYWORDS = (
 )
 
 RESTAURANT_KEYWORDS = (
-    "restaurant", "ресторан", "comer", "dónde comer", "donde comer",
-    "tapas", "café", "cafe", "кафе", "еда", "food",
+    "restaurant", "restaurante", "ресторан",
+    "dónde comer", "donde comer", "где поесть", "где покушать",
+    "tapas", "кафе", "кофейн",
 )
 
 CHURCH_KEYWORDS = (
